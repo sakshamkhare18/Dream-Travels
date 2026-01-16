@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Tour & Travels</title>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+:root{
+  --dark:#0b1220;
+  --blue:#1e3a8a;
+  --accent:#ff6a00;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:linear-gradient(120deg,#0b1220,#020617)}
+
+nav{
+  position:fixed;top:0;width:100%;
+  background:rgba(2,6,23,.9);
+  display:flex;justify-content:space-between;
+  align-items:center;padding:15px 60px;
+  z-index:1000
+}
+nav h2{color:#fff}
+nav ul{display:flex;gap:30px;list-style:none}
+nav ul li a{color:#fff;text-decoration:none}
+nav button{
+  padding:10px 22px;border:none;
+  background:var(--accent);color:#fff;
+  border-radius:25px;cursor:pointer
+}
+
+.travel-studio{
+  margin:120px auto 60px;width:90%;max-width:1200px;
+  background:#fff;border-radius:40px;
+  display:grid;grid-template-columns:1.1fr 1fr;
+  overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.5)
+}
+.studio-visual{
+  background:linear-gradient(135deg,var(--blue),var(--dark));
+  color:#fff;padding:60px
+}
+.studio-visual h1{font-size:50px}
+.studio-visual span{color:var(--accent)}
+.studio-panel{padding:50px}
+
+.mode-selector{display:flex;gap:12px;margin:20px 0}
+.mode{
+  flex:1;padding:14px;border-radius:18px;
+  border:1px solid #ddd;background:#fff;
+  cursor:pointer;font-weight:600
+}
+.mode.active{background:var(--accent);color:#fff;border:none}
+
+.smart-form{display:grid;gap:14px}
+.smart-form input{padding:14px;border-radius:14px;border:1px solid #ddd}
+
+.option-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px
+}
+.option-card{
+  border:2px solid #e5e7eb;
+  border-radius:18px;
+  padding:10px;
+  text-align:center;
+  cursor:pointer;
+  transition:.3s
+}
+.option-card img{
+  width:100%;
+  height:110px;
+  object-fit:cover;
+  border-radius:12px
+}
+.option-card p{margin-top:6px;font-weight:600}
+.option-card.active{
+  border-color:var(--accent);
+  background:#fff7ed
+}
+
+.primary{
+  padding:16px;border:none;border-radius:30px;
+  background:linear-gradient(120deg,var(--accent),#ff9248);
+  color:#fff;font-size:16px;cursor:pointer
+}
+
+.status{
+  padding:12px;border-radius:14px;
+  background:#ecfeff;color:#0369a1;
+  font-weight:600;text-align:center
+}
+
+/* ✅ WhatsApp Floating Button */
+.whatsapp-btn{
+  position:fixed;
+  right:25px;
+  bottom:25px;
+  width:60px;
+  height:60px;
+  background:#25D366;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
+  z-index:2000;
+  text-decoration:none
+}
+.whatsapp-btn img{
+  width:32px;
+  height:32px
+}
+
+footer{
+  background:#020617;color:#fff;
+  padding:40px;text-align:center
+}
+
+@media(max-width:900px){
+  nav{padding:15px 25px}
+  .travel-studio{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <h2>Dream Travels</h2>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button onclick="scrollToBook()">Book Now</button>
+</nav>
+
+<section class="travel-studio" id="home">
+  <div class="studio-visual">
+    <h1>Luxury <span>Travel</span><br>For You</h1>
+    <p>Cab • Luxury Cars • Private Jet • Hotels</p>
+  </div>
+
+  <div class="studio-panel">
+    <h2>Start Booking</h2>
+
+    <div class="mode-selector">
+      <button class="mode active">Cab Ride</button>
+      <button class="mode">Hotel Stay</button>
+      <button class="mode">Holiday Tour</button>
+    </div>
+
+    <div class="smart-form"></div>
+  </div>
+</section>
+
+<footer id="contact">
+  <h3>Dream Tour & Travels</h3>
+  <p>College Project | Luxury Booking Demo</p>
+</footer>
+
+<!-- ✅ WhatsApp Button -->
+<a class="whatsapp-btn"
+href="https://wa.me/916392670955?text=Hello%20I%20want%20to%20book%20a%20luxury%20trip"
+target="_blank">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
+</a>
+
+<script>
+const form=document.querySelector(".smart-form");
+const modes=document.querySelectorAll(".mode");
+let selectedCar="",selectedHotel="";
+
+function loadForm(type){
+
+if(type==="Cab Ride"){
+form.innerHTML=`
+<input placeholder="Pickup Location">
+<input placeholder="Drop Location">
+
+<h4>Select Vehicle</h4>
+<div class="option-grid">
+  <div class="option-card" onclick="selectCar(this,'Hatchback')">
+    <img src="https://imgd.aeplcdn.com/600x337/n/cw/ec/102663/baleno-exterior-right-front-three-quarter-69.png?isig=0&q=80">
+    <p>Hatchback</p>
+  </div>
+  <div class="option-card" onclick="selectCar(this,'Sedan')">
+    <img src="https://t3.ftcdn.net/jpg/06/50/57/76/360_F_650577635_GesSMihkw3BjAVXDAKcLeaC8Ec8yUbTq.jpg">
+    <p>Sedan</p>
+  </div>
+  <div class="option-card" onclick="selectCar(this,'SUV')">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5wAwxA80SLko0YA98AfewpLdULDGV6CH0_w&s">
+    <p>SUV</p>
+  </div>
+  <div class="option-card" onclick="selectCar(this,'Rolls-Royce')">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmdN9hyghnDXQklP7_ZkWL1G7611bJj80Jag&s">
+    <p>Rolls-Royce</p>
+  </div>
+  <div class="option-card" onclick="selectCar(this,'Private Jet')">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1c7vRap4YWw6_RSRZiTjkfpXitZOVHAispw&s">
+    <p>Private Jet</p>
+  </div>
+</div>
+
+<button class="primary" onclick="checkCar()">Check Availability</button>
+<div id="status"></div>
+<button class="primary" onclick="payNow()">Book & Pay</button>
+`;
+}
+
+if(type==="Hotel Stay"){
+form.innerHTML=`
+<input placeholder="City">
+
+<h4>Select Hotel Type</h4>
+<div class="option-grid">
+  <div class="option-card" onclick="selectHotel(this,'Budget')">
+    <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa">
+    <p>Budget</p>
+  </div>
+  <div class="option-card" onclick="selectHotel(this,'Deluxe')">
+    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945">
+    <p>Deluxe</p>
+  </div>
+  <div class="option-card" onclick="selectHotel(this,'Luxury')">
+    <img src="https://www.hoteliermiddleeast.com/cloud/2022/10/22/floating-hotel-heart-of-europe.jpg">
+    <p>Luxury</p>
+  </div>
+</div>
+
+<button class="primary" onclick="checkHotel()">Check Availability</button>
+<div id="status"></div>
+<button class="primary" onclick="payNow()">Book & Pay</button>
+`;
+}
+
+if(type==="Holiday Tour"){
+form.innerHTML=`
+<input placeholder="From City">
+<input placeholder="Destination">
+<button class="primary" onclick="payNow()">Book Package</button>
+`;
+}
+}
+
+loadForm("Cab Ride");
+
+modes.forEach(btn=>{
+btn.onclick=()=>{
+modes.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+loadForm(btn.innerText);
+};
+});
+
+function selectCar(card,car){
+selectedCar=car;
+document.querySelectorAll(".option-card").forEach(c=>c.classList.remove("active"));
+card.classList.add("active");
+}
+
+function selectHotel(card,hotel){
+selectedHotel=hotel;
+document.querySelectorAll(".option-card").forEach(c=>c.classList.remove("active"));
+card.classList.add("active");
+}
+
+function checkCar(){
+document.getElementById("status").innerHTML=
+selectedCar
+?`<div class="status">🚗 ${selectedCar} Available</div>`
+:`<div class="status">❌ Select a vehicle</div>`;
+}
+
+function checkHotel(){
+document.getElementById("status").innerHTML=
+selectedHotel
+?`<div class="status">🏨 ${selectedHotel} Rooms Available</div>`
+:`<div class="status">❌ Select hotel type</div>`;
+}
+
+function payNow(){
+new Razorpay({
+key:"rzp_test_1DP5mmOlF5G5ag",
+amount:"50000",
+currency:"INR",
+name:"Dream Tour & Travels",
+handler:function(res){
+alert("Payment Successful\nID: "+res.razorpay_payment_id);
+}
+}).open();
+}
+
+function scrollToBook(){
+document.getElementById("home").scrollIntoView({behavior:"smooth"});
+}
+</script>
+
+</body>
+</html>
